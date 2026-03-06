@@ -7,12 +7,10 @@
   <p>Find and correct previously logged meals.</p>
 </div>
 
-<form method="get" action="/edit-records" style="display:flex; gap:1rem; align-items:flex-end; margin-bottom:1rem;">
-  <label style="margin:0">
-    Show last N days
-    <input type="number" name="days" value="{{ days }}" min="1" max="30" style="width:6rem" />
-  </label>
-  <button type="submit" style="margin:0">Refresh</button>
+<form method="get" action="/edit-records" style="display:flex; gap:0.75rem; align-items:center; margin-bottom:1.5rem;">
+  <label style="margin:0; font-size:0.85rem; color:rgba(255,255,255,0.5); white-space:nowrap">Show last N days</label>
+  <input type="number" name="days" value="{{ days }}" min="1" max="30" style="width:5rem; margin:0" />
+  <button type="submit" style="margin:0; width:auto">Refresh</button>
 </form>
 
 {% if not meals %}

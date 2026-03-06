@@ -144,7 +144,7 @@
 
   <div class="topbar">
     <div class="topbar-inner">
-      <a href="/" class="topbar-brand">{{ app_name }}</a>
+      <a href="/" class="topbar-brand">{{ app_name | replace('-', ' ') | upper }}</a>
       <nav class="topbar-nav">
         <a href="/add-meal"     class="{{ 'active' if active == 'add_meal'     else '' }}">Add Meal</a>
         <a href="/edit-records" class="{{ 'active' if active == 'edit_records' else '' }}">Edit Records</a>

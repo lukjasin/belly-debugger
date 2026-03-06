@@ -26,10 +26,14 @@ def get_influx_client():
 
 
 def fetch_meals(days: int) -> list[dict]:
+    start = datetime.datetime.combine(
+        datetime.date.today() - datetime.timedelta(days=days - 1),
+        datetime.time.min
+    )
     client = get_influx_client()
     query = f"""
 from(bucket: "{INFLUXDB_BUCKET}")
-  |> range(start: -{days}d)
+  |> range(start: {start.isoformat()}Z)
   |> filter(fn: (r) => r._measurement == "nutrition")
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> sort(columns: ["_time"], desc: true)
