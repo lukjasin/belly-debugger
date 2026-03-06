@@ -1,10 +1,9 @@
-version: '3.8'
-
 services:
   # InfluxDB - The storage for your belly data
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
+    restart: unless-stopped
     ports:
       - "8086:8086"
     volumes:
@@ -21,6 +20,7 @@ services:
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
+    restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
@@ -32,6 +32,7 @@ services:
   belly-api:
     build: .
     container_name: belly_api
+    restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
