@@ -77,28 +77,32 @@ async def add_meal_page(request: Request):
 async def add_meal_submit(request: Request):
     form = await request.form()
 
+    if "ready_to_send" not in form:
+        return templates.TemplateResponse("add_meal.html", _ctx(request, error="Please check 'Ready to log' before submitting."))
+
+    def num(key, default=0):
+        return float((form.get(key) or str(default)).replace(",", "."))
+
     log_dt = datetime.datetime.fromisoformat(
         f"{form['log_date']}T{form['log_time']}"
     )
     is_weighted = "is_weighted" in form
-    weight_consumed = float(form.get("weight_consumed") or 0)
-    reference_size = float(form.get("reference_size") or 100)
 
     payload = {
         "meal_name": form["meal_name"],
         "meal_type": form["meal_type"],
         "category": form["category"],
         "source": form["source"],
-        "kcal_base": float(form.get("kcal") or 0),
-        "protein_base": float(form.get("prot") or 0),
-        "fat_total_base": float(form.get("fat") or 0),
-        "fat_saturated_base": float(form.get("fat_sat") or 0),
-        "carbs_total_base": float(form.get("carb") or 0),
-        "sugars_base": float(form.get("sugars") or 0),
-        "salt_base": float(form.get("salt") or 0),
+        "kcal_base": num("kcal"),
+        "protein_base": num("prot"),
+        "fat_total_base": num("fat"),
+        "fat_saturated_base": num("fat_sat"),
+        "carbs_total_base": num("carb"),
+        "sugars_base": num("sugars"),
+        "salt_base": num("salt"),
         "is_weighted": is_weighted,
-        "weight_consumed_g": weight_consumed if is_weighted else None,
-        "reference_size_g": reference_size,
+        "weight_consumed_g": num("weight_consumed") if is_weighted else None,
+        "reference_size_g": num("reference_size", 100),
         "log_time": log_dt.isoformat(),
     }
 
@@ -181,19 +185,22 @@ async def edit_records_submit(request: Request):
         org=INFLUXDB_ORG,
     )
 
+    def num(key, default=0):
+        return float((form.get(key) or str(default)).replace(",", "."))
+
     point = (
         Point("nutrition")
         .tag("type", form["meal_type"])
         .tag("category", form["category"])
         .tag("source", form["source"])
         .field("name", form["meal_name"])
-        .field("kcal", float(form.get("kcal") or 0))
-        .field("protein", float(form.get("prot") or 0))
-        .field("fat", float(form.get("fat") or 0))
-        .field("fat_sat", float(form.get("fat_sat") or 0))
-        .field("carbs", float(form.get("carb") or 0))
-        .field("sugars", float(form.get("sugars") or 0))
-        .field("salt", float(form.get("salt") or 0))
+        .field("kcal", num("kcal"))
+        .field("protein", num("prot"))
+        .field("fat", num("fat"))
+        .field("fat_sat", num("fat_sat"))
+        .field("carbs", num("carb"))
+        .field("sugars", num("sugars"))
+        .field("salt", num("salt"))
         .time(new_dt, WritePrecision.S)
     )
     client.write_api(write_options=SYNCHRONOUS).write(bucket=INFLUXDB_BUCKET, record=point)
