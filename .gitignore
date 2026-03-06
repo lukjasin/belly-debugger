@@ -6,3 +6,4 @@ __pycache__/
 influxdb_data/
 grafana_data/
 tools/
+influx-backup/
