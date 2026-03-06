@@ -77,9 +77,6 @@ async def add_meal_page(request: Request):
 async def add_meal_submit(request: Request):
     form = await request.form()
 
-    if "ready_to_send" not in form:
-        return templates.TemplateResponse("add_meal.html", _ctx(request, error="Please check 'Ready to log' before submitting."))
-
     def num(key, default=0):
         return float((form.get(key) or str(default)).replace(",", "."))
 
