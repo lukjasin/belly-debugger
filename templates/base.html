@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ app_name }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <style>
+    :root { --pico-font-size: 15px; }
+    nav a.active { font-weight: bold; text-decoration: underline; }
+    .flash-success { color: var(--pico-color-green-500); margin-bottom: 1rem; }
+    .flash-error   { color: var(--pico-color-red-500);   margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <ul><li><strong>{{ app_name }}</strong></li></ul>
+      <ul>
+        <li><a href="/add-meal"     class="{{ 'active' if active == 'add_meal'      else '' }}">Add Meal</a></li>
+        <li><a href="/edit-records" class="{{ 'active' if active == 'edit_records'  else '' }}">Edit Records</a></li>
+        <li><a href="/body-weight"  class="{{ 'active' if active == 'body_weight'   else '' }}">Body Weight</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    {% if success %}<p class="flash-success">✓ {{ success }}</p>{% endif %}
+    {% if error   %}<p class="flash-error">✗ {{ error }}</p>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% set active = "body_weight" %}
+{% block content %}
+
+<h2>Register Body Weight</h2>
+
+<form method="post" action="/body-weight">
+  <fieldset>
+    <div class="grid">
+      <label>Weight (kg)
+        <input type="number" name="weight" min="40" max="200" step="0.1" placeholder="Optional" />
+      </label>
+      <label>Waist (cm)
+        <input type="number" name="waist" min="40" max="200" step="0.5" placeholder="Optional" />
+      </label>
+      <label>Chest (cm)
+        <input type="number" name="chest" min="40" max="200" step="0.5" placeholder="Optional" />
+      </label>
+    </div>
+    <label>Date
+      <input type="date" name="w_date" id="w_date" required />
+    </label>
+  </fieldset>
+  <button type="submit">Save Measurements</button>
+</form>
+
+<script>
+  document.getElementById("w_date").value = new Date().toISOString().slice(0, 10);
+</script>
+
+{% endblock %}

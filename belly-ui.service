@@ -1,0 +1,14 @@
+[Unit]
+Description=Belly Debugger UI (FastAPI)
+After=network.target
+
+[Service]
+User=kimbo
+WorkingDirectory=/home/kimbo/belly-debugger
+ExecStart=/home/kimbo/belly-debugger/.venv/bin/uvicorn ui:app --host 0.0.0.0 --port 8501
+Restart=always
+RestartSec=5
+EnvironmentFile=/home/kimbo/belly-debugger/.env
+
+[Install]
+WantedBy=multi-user.target

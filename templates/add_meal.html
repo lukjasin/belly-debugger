@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% set active = "add_meal" %}
+{% block content %}
+
+<h2>Add Meal</h2>
+
+<form method="post" action="/add-meal">
+
+  <fieldset>
+    <legend>General</legend>
+    <label>Meal Name
+      <input type="text" name="meal_name" placeholder="e.g. Chicken in Peanut Sauce" required />
+    </label>
+    <div class="grid">
+      <label>Meal Type
+        <select name="meal_type">
+          <option>Breakfast</option>
+          <option>II Breakfast</option>
+          <option>Lunch</option>
+          <option>Snack</option>
+          <option>Dinner</option>
+        </select>
+      </label>
+      <label>Category
+        <select name="category">
+          <option>catering</option>
+          <option>home</option>
+          <option>restaurant</option>
+          <option>cheat</option>
+        </select>
+      </label>
+      <label>Source
+        <select name="source">
+          <option>Brokul</option>
+          <option>Homemade</option>
+          <option>Store</option>
+          <option>Restaurant</option>
+        </select>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Time</legend>
+    <div class="grid">
+      <label>Date
+        <input type="date" name="log_date" id="log_date" required />
+      </label>
+      <label>Time
+        <input type="time" name="log_time" id="log_time" required />
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Nutritional Values</legend>
+    <small>Values from the label (per box) or per 100g for manual weighing.</small>
+    <div class="grid">
+      <label>kcal       <input type="number" name="kcal"    min="0" step="1"   value="0" /></label>
+      <label>Fat (g)    <input type="number" name="fat"     min="0" step="0.1" value="0" /></label>
+      <label>Sat. Fat (g) <input type="number" name="fat_sat" min="0" step="0.1" value="0" /></label>
+      <label>Carbs (g)  <input type="number" name="carb"   min="0" step="0.1" value="0" /></label>
+    </div>
+    <div class="grid">
+      <label>Sugars (g) <input type="number" name="sugars" min="0" step="0.1" value="0" /></label>
+      <label>Protein (g)<input type="number" name="prot"   min="0" step="0.1" value="0" /></label>
+      <label>Salt (g)   <input type="number" name="salt"   min="0" step="0.01" value="0" /></label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Weight Logic</legend>
+    <label>
+      <input type="checkbox" name="is_weighted" id="is_weighted" onchange="toggleWeight(this)" />
+      Calculate based on weight (Weekend / Manual Mode)
+    </label>
+    <div class="grid" id="weight_fields" style="display:none">
+      <label>Weight Consumed (g)
+        <input type="number" name="weight_consumed" min="0" step="1" value="0" />
+      </label>
+      <label>Reference Size (g)
+        <input type="number" name="reference_size" min="1" step="10" value="100" />
+      </label>
+    </div>
+  </fieldset>
+
+  <button type="submit">Commit to Database</button>
+</form>
+
+<script>
+  // Set default date/time to now
+  const now = new Date();
+  document.getElementById("log_date").value = now.toISOString().slice(0, 10);
+  document.getElementById("log_time").value = now.toTimeString().slice(0, 5);
+
+  function toggleWeight(cb) {
+    document.getElementById("weight_fields").style.display = cb.checked ? "" : "none";
+  }
+</script>
+
+{% endblock %}
