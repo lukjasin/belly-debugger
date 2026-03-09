@@ -26,14 +26,15 @@ def get_influx_client():
 
 
 def fetch_meals(days: int) -> list[dict]:
-    start = datetime.datetime.combine(
+    local_midnight = datetime.datetime.combine(
         datetime.date.today() - datetime.timedelta(days=days - 1),
-        datetime.time.min
+        datetime.time.min,
     )
+    start = local_midnight.astimezone(datetime.timezone.utc)
     client = get_influx_client()
     query = f"""
 from(bucket: "{INFLUXDB_BUCKET}")
-  |> range(start: {start.isoformat()}Z)
+  |> range(start: {start.isoformat()})
   |> filter(fn: (r) => r._measurement == "nutrition")
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> sort(columns: ["_time"], desc: true)
@@ -44,7 +45,7 @@ from(bucket: "{INFLUXDB_BUCKET}")
     meals = []
     for table in tables:
         for record in table.records:
-            t = record.get_time().replace(tzinfo=None)
+            t = record.get_time().astimezone().replace(tzinfo=None)
             meals.append({
                 "_time_utc_iso": record.get_time().isoformat(),
                 "_time_local": t.strftime("%Y-%m-%dT%H:%M"),
@@ -86,7 +87,7 @@ async def add_meal_submit(request: Request):
 
     log_dt = datetime.datetime.fromisoformat(
         f"{form['log_date']}T{form['log_time']}"
-    )
+    ).astimezone(datetime.timezone.utc)
     is_weighted = "is_weighted" in form
 
     payload = {
@@ -175,7 +176,7 @@ async def edit_records_submit(request: Request):
     days = int(form.get("days", 5))
 
     old_utc = datetime.datetime.fromisoformat(form["old_time_utc"])
-    new_dt = datetime.datetime.fromisoformat(f"{form['log_date']}T{form['log_time_val']}")
+    new_dt = datetime.datetime.fromisoformat(f"{form['log_date']}T{form['log_time_val']}").astimezone(datetime.timezone.utc)
 
     client = get_influx_client()
     client.delete_api().delete(
