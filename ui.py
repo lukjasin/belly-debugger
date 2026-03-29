@@ -31,10 +31,14 @@ def fetch_meals(days: int) -> list[dict]:
         datetime.time.min,
     )
     start = local_midnight.astimezone(datetime.timezone.utc)
+    end_of_today = datetime.datetime.combine(
+        datetime.date.today() + datetime.timedelta(days=1),
+        datetime.time.min,
+    ).astimezone(datetime.timezone.utc)
     client = get_influx_client()
     query = f"""
 from(bucket: "{INFLUXDB_BUCKET}")
-  |> range(start: {start.isoformat()})
+  |> range(start: {start.isoformat()}, stop: {end_of_today.isoformat()})
   |> filter(fn: (r) => r._measurement == "nutrition")
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> sort(columns: ["_time"], desc: true)
